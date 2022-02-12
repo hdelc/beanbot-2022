@@ -3,7 +3,6 @@ require("./config").config()
 
 const Discord = require("discord.js");
 const config = require("./config.json");
-const otherFile = require("./otherFile")
 
 const client = new Discord.Client({intents: Discord.Intents.FLAGS.GUILDS})
 client.commands = new Discord.Collection();
