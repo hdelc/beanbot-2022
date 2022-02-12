@@ -1,0 +1,14 @@
+{
+  "name": "beanbot",
+  "version": "1.0.0",
+  "description": "Discord bot for Beanpot 2022",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "me",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^13.6.0"
+  }
+}
