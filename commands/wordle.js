@@ -9,13 +9,38 @@ data: new SlashCommandBuilder()
 			.setDescription('Your input word')
 			.setRequired(true)),
 	async execute(interaction) {
-	const wordle = "query"
+	const fs = require("fs");
+	const wordsBuffer = fs.readFile('../letters.txt');
+	const words = wordsbuffer.toString();
+	const wordsList = words.split(" ");
+	const wordsList1 = wordList;
+
+	if(words.length > 5){
+	const buffer = fs.readFile('../words.txt');
+	const fileContent = buffer.toString();
+	const wordleList = fileContent.split(" ");
+	const index = Math.floor(Math.random() * 199);
+	const wordle = wordleList[index];
+	}
+	else {
+	const wordle = wordsList1.shift();
+	}
 	const wLetters = wordle.split('');
-	const string = interaction.options.getString('input');
+
+	const string = interaction.options.getString('input').toLowerCase();
 	const letters = string.split('');
+	const output = addLetters(letters, wordsList1);
 	const intArray = intArrayMap(letters,wLetters);
 	const result = stringMap(letters,intArray).toString();
-	await interaction.reply(`${reult}`);
+	const outputFile = wordle + ' ' + output;
+	if(string === wordle) {
+	fs.writeFile('../words.txt', '');
+	await interaction.reply(`You have won WORDLE with the guess ${wordle}!`);
+	}
+	else {
+	fs.writeFile('../words.txt', outputFile);
+	}
+	await interaction.reply(`${result} Letters that have been used so far: ${output}`);
 	}
 }
 
@@ -49,4 +74,14 @@ function stringMap(list1, list2) {
 		}
 	}
 	return stringArray;
+}
+
+function addLetters(list, str) {
+	var ret = str;
+	for(var i = 0; i<list.length; i++) {
+		if(str.includes(list[i])) {
+			ret = ret + ' ' + list[i];
+		}
+	}
+	return ret;
 }
