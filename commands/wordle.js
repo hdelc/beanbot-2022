@@ -35,11 +35,11 @@ data: new SlashCommandBuilder()
 	const result = stringMap(letters,intArray).toString();
 	const outputFile = wordle + ' ' + output;
 	if(string === wordle) {
-	fs.writeFileSync('./words.txt', '', err => {if(err) throw err;});
+	fs.writeFileSync('./letters.txt', '', err => {if(err) throw err;});
 	await interaction.reply(`You have won WORDLE with the guess ${wordle}!`);
 	}
 	else {
-	fs.writeFileSync('./words.txt', outputFile, err => {if(err) throw err;});
+	fs.writeFileSync('./letters.txt', outputFile, err => {if(err) throw err;});
 	}
 	await interaction.reply(`${result} Letters that have been used so far: ${output}`);
 	}
