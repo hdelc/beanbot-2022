@@ -16,21 +16,23 @@ data: new SlashCommandBuilder()
 	const wordsList1 = wordsList;
 
   let wordle = "";
-	if(words.length > 5){
-	const buffer = fs.readFileSync('./words.txt', err => {if(err) throw err;});
-	const fileContent = buffer.toString();
-	const wordleList = fileContent.split(" ");
-	const index = Math.floor(Math.random() * 199);
-	wordle = wordleList[index];
+	if(words.length < 1){
+    console.log("Length 0")
+    const buffer = fs.readFileSync('./words.txt', err => {if(err) throw err;});
+    const fileContent = buffer.toString();
+    const wordleList = fileContent.split("\n");
+    const index = Math.floor(Math.random() * 199);
+    wordle = wordleList[index];
 	}
 	else {
-	wordle = wordsList1.shift();
+    console.log("Length over 0")
+	  wordle = wordsList1.shift();
 	}
 	const wLetters = wordle.split('');
 
 	const string = interaction.options.getString('input').toLowerCase();
 	const letters = string.split('');
-	const output = addLetters(letters, wordsList1);
+	const output = addLetters(letters, wordsList1.join(" "));
 	const intArray = intArrayMap(letters,wLetters);
 	const result = stringMap(letters,intArray).toString();
 	const outputFile = wordle + ' ' + output;
@@ -80,7 +82,7 @@ function stringMap(list1, list2) {
 function addLetters(list, str) {
 	var ret = str;
 	for(var i = 0; i<list.length; i++) {
-		if(str.includes(list[i])) {
+		if(!str.includes(list[i])) {
 			ret = ret + ' ' + list[i];
 		}
 	}
