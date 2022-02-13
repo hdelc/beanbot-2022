@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { findSourceMap } = require('module')
 const { MessageEmbed } = require('discord.js')
+const paths = require("../paths")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -11,7 +11,13 @@ module.exports = {
       .setDescription("Create a new project")
       .addStringOption(option => option.setName("name")
         .setDescription("The name of the project to be created")
-      )
+        .setRequired(true))
+      .addStringOption(option => option.setName("link")
+        .setDescription("Your project link")
+        .setRequired(true))
+      .addStringOption(option => option.setName("description")
+        .setDescription("Your project description")
+        .setRequired(true))
     )
     .addSubcommand(sc => sc.setName("delete")
       .setDescription("Deletes a given project")
@@ -25,12 +31,14 @@ module.exports = {
     ,
   async execute(interaction) {
     const userId = interaction.user.id;
-    const validRegex = /^[\w-]{0,32}/;
-    const userDir = `./save/${userId}`;
+    const validRegex = /^[\w- ]{0,32}/;
+    const userDir = `./save/project/${userId}`;
     const projectName = interaction.options.getString("name");
     const projectDir = `${userDir}/${projectName}`
     switch (interaction.options.getSubcommand()) {
       case "create":
+        const link = interaction.options.getString("link");
+        const description = interaction.options.getString("description");
         if (!projectName.match(validRegex)) {
           interaction.reply({
             content: `Invalid project name: \`${projectName}\``,
@@ -48,9 +56,16 @@ module.exports = {
         fs.writeFile(`${projectDir}/feedback.json`,
           JSON.stringify(feedbackObject),
           err => {if (err) throw err;});
-          interaction.reply({
-            content: `\`${projectName}\` was created.`,
-            ephemeral: true});
+        fs.writeFile(`${projectDir}/META.json`,
+          JSON.stringify({
+            owner: userId, 
+            link: link, 
+            createTimestamp: Date.now(), 
+            description: description}),
+          err => {if (err) throw err;});
+        interaction.reply({
+          content: `\`${projectName}\` was created.`,
+          ephemeral: true});
         break;
       case "delete":
         if (!projectName.match(validRegex)) {
@@ -85,4 +100,4 @@ module.exports = {
 
 const projectLabels = ["server", "user", "feedback", "rating"]
 
-const feedbackObject = { feedback: [] }
+const feedbackObject = { feedback: [], entries: 0 };
