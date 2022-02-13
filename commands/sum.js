@@ -1,12 +1,13 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-const data = new SlashCommandBuilder()
+module.exports = {
+data: new SlashCommandBuilder()
 	.setName('sum')
 	.setDescription('sums the given numbers')
 	.addStringOption(option =>
 		option.setName('input')
 			.setDescription('String version of numbers')
-			.setRequired(true));
+			.setRequired(true)),
 
 	async execute(interaction) {
 	const string = interaction.options.getString('input');

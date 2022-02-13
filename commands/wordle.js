@@ -10,20 +10,21 @@ data: new SlashCommandBuilder()
 			.setRequired(true)),
 	async execute(interaction) {
 	const fs = require("fs");
-	const wordsBuffer = fs.readFile('../letters.txt');
-	const words = wordsbuffer.toString();
+	const wordsBuffer = fs.readFileSync('./letters.txt', err => {if(err) throw err;});
+	const words = wordsBuffer.toString();
 	const wordsList = words.split(" ");
-	const wordsList1 = wordList;
+	const wordsList1 = wordsList;
 
+  let wordle = "";
 	if(words.length > 5){
-	const buffer = fs.readFile('../words.txt');
+	const buffer = fs.readFileSync('./words.txt', err => {if(err) throw err;});
 	const fileContent = buffer.toString();
 	const wordleList = fileContent.split(" ");
 	const index = Math.floor(Math.random() * 199);
-	const wordle = wordleList[index];
+	wordle = wordleList[index];
 	}
 	else {
-	const wordle = wordsList1.shift();
+	wordle = wordsList1.shift();
 	}
 	const wLetters = wordle.split('');
 
@@ -34,11 +35,11 @@ data: new SlashCommandBuilder()
 	const result = stringMap(letters,intArray).toString();
 	const outputFile = wordle + ' ' + output;
 	if(string === wordle) {
-	fs.writeFile('../words.txt', '');
+	fs.writeFileSync('./words.txt', '', err => {if(err) throw err;});
 	await interaction.reply(`You have won WORDLE with the guess ${wordle}!`);
 	}
 	else {
-	fs.writeFile('../words.txt', outputFile);
+	fs.writeFileSync('./words.txt', outputFile, err => {if(err) throw err;});
 	}
 	await interaction.reply(`${result} Letters that have been used so far: ${output}`);
 	}
