@@ -24,10 +24,11 @@ module.exports = {
     )
     ,
   async execute(interaction) {
-    const safeUsername = interaction.user.tag.replace("#", "_");
+    const userId = interaction.user.id;
     const validRegex = /^[\w-]{0,32}/;
-    const userDir = `./save/${safeUsername}`;
+    const userDir = `./save/${userId}`;
     const projectName = interaction.options.getString("name");
+    const projectDir = `${userDir}/${projectName}`
     switch (interaction.options.getSubcommand()) {
       case "create":
         if (!projectName.match(validRegex)) {
@@ -36,20 +37,20 @@ module.exports = {
             ephemeral: true});
           return;
         }
-        if (fs.existsSync(`${userDir}/${projectName}${extension}`)) {
+        if (fs.existsSync(`${projectDir}`)) {
           interaction.reply({
             content: `\`${projectName}\` already exists. You can delete it with \"/project delete ${projectName}\"`,
             ephemeral: true});
           return;
         }
-        if (!fs.existsSync(userDir)) 
-          await fs.mkdir(userDir, {recursive: true}, err => {if (err) throw err;});
-          fs.writeFile(`${userDir}/${projectName}${extension}`,
-            projectLabels.join(","),
-            err => {if (err) throw err;});
-            interaction.reply({
-              content: `\`${projectName}\` was created.`,
-              ephemeral: true});
+        if (!fs.existsSync(projectDir)) 
+          fs.mkdirSync(projectDir, {recursive: true}, err => {if (err) throw err;});
+        fs.writeFile(`${projectDir}/feedback.json`,
+          JSON.stringify(feedbackObject),
+          err => {if (err) throw err;});
+          interaction.reply({
+            content: `\`${projectName}\` was created.`,
+            ephemeral: true});
         break;
       case "delete":
         if (!projectName.match(validRegex)) {
@@ -58,13 +59,13 @@ module.exports = {
             ephemeral: true});
           return;
         }
-        if (!fs.existsSync(`${userDir}/${projectName}${extension}`)) {
+        if (!fs.existsSync(`${projectDir}`)) {
           interaction.reply({
             content: `\`${projectName}\` does not exist`,
             ephemeral: true});
           return;
         }
-        fs.rm(`${userDir}/${projectName}${extension}`, err => {if (err) throw err;});
+        fs.rm(`${projectDir}`, {recursive: true}, err => {if (err) throw err;});
         interaction.reply({
           content: `\`${projectName}\` was deleted.`,
           ephemeral: true});
@@ -83,4 +84,5 @@ module.exports = {
 }
 
 const projectLabels = ["server", "user", "feedback", "rating"]
-const extension = ".csv"
+
+const feedbackObject = { feedback: [] }
